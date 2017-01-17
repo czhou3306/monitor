@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-ng-app="seastar">
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+   <meta http-equiv="Pragma" content="no-cache" />
+   <meta http-equiv="Expires" content="0" />
+   <meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <meta name="description" content="{{app.description}}">
+   <meta name="keywords" content="app, responsive, angular, bootstrap, dashboard, admin">
+   <title data-ng-bind="::pageTitle()"></title>
+   <!-- Bootstrap styles-->
+  <!-- <link rel="icon" href="app/img/favorite.gif">-->
+   <link rel="icon" href="favicon.ico">
+
+   <!-- build:css master/css/app.css -->
+   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="bower_components/smalot-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+   <link href="master/css/index.css" rel="stylesheet">
+   <!-- endbuild -->
+</head>
+
+<body>
+   <div data-ui-view="" data-autoscroll="false"></div>
+
+   <!-- build:js master/js/base.js -->
+   <script src="bower_components/jquery/dist/jquery.min.js"></script>
+   <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+   <script src="bower_components/angular/angular.min.js"></script>
+   <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+   <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+   <script src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
+   <script src="bower_components/angular-route/angular-route.min.js"></script>
+   <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+   <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+   <script src="bower_components/angular-ui-utils/ui-utils.min.js"></script>
+   <script src="bower_components/oclazyload/dist/ocLazyLoad.min.js"></script>
+
+   <script src="lib/js/angular-local-storage.min.js"></script>
+   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+   <script src="bower_components/moment/min/moment.min.js"></script>
+   <script src="bower_components/smalot-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"/>
+   <script src="lib/js/md5.js"></script>
+   <script src="lib/js/utils.js"></script>
+
+   <script src="lib/js/jweixin-1.0.0.js"></script>
+   <script src="bower_components/highcharts/highcharts.js"></script>
+
+   <!-- endbuild -->
+
+
+   <!-- build:js master/js/app.js -->
+   <script src="master/js/app.init.js"></script>
+   <script src="master/js/constants.js"></script>
+   <script src="master/js/route/route.js"></script>
+   <script src="master/js/route/route-home.js"></script>
+
+   <script src="master/js/services/service-login.js"></script>
+   <script src="master/js/controllers/controller-home.js"></script>
+
+   <script src="master/js/services/route-helpers.js"></script>
+
+   <script src="master/js/directive/directives.js"></script>
+   <script src="master/js/filter/dateFilter.js"></script>
+
+   <!-- endbuild -->
+
+
+   <div class="page-loading" ng-if="loading">
+      <div class="loading-icon"><i class="fa fa-spinner fa-spin"></i></div>
+   </div>
+
+
+
+</body>
+
+</html>

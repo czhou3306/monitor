@@ -1,0 +1,70 @@
+<configuration>
+  
+    <property file="config.properties" />
+    
+    <timestamp key = "tt_pattern" pattern = "yyyy-MM-dd"/>
+    <property name = "file_size" value = "500MB"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志（框架 + 业务） -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>logs/error.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] %logger{36} [%file : %line] %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 业务日志 -->
+    <appender name="BIZ" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/biz.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>logs/biz.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %msg%n</pattern>
+        </encoder>
+		
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+
+            <evaluator>
+                <expression>
+                    event.getLevel().toInt() &gt;= ch.qos.logback.classic.Level.${log.level}.toInt()
+                    &amp;&amp; event.getLevel().toInt() &lt;= ch.qos.logback.classic.Level.WARN.toInt()
+                </expression>
+            </evaluator>
+        </filter>
+    </appender>
+
+     <logger name="com.qiangungun.monitor" level="INFO" additivity="false">
+        <appender-ref ref="BIZ"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="BIZ"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

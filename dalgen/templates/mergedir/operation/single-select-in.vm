@@ -1,0 +1,38 @@
+##渲染中间部分
+	  //判断开关是否开
+  	  if (this.getPower() == false) {
+  		  //直接从原字段取值
+#if (${operation.returnTypePrimitive})
+	    ${operation.simpleReturnTypeForPrimitive} retObj = (${operation.simpleReturnTypeForPrimitive}) getSqlMapClientTemplate().queryForObject("${operation.mappedStatementId}", ${paramName});
+
+		if (retObj == null) {
+		    return ${operation.defaultReturnValue};
+		} else {
+		    return retObj.${operation.simpleReturnType}Value();
+		}
+#else
+        return (${operation.simpleReturnType}) getSqlMapClientTemplate().queryForObject("${operation.mappedStatementId}", ${paramName});
+#end
+  	  }
+  	    //当开关开时，从新字段取数值
+		${operation.simpleReturnType} opDO = (${operation.simpleReturnType})getSqlMapClientTemplate().queryForObject("${operation.mappedStatementId}", ${paramName});
+		
+		if (opDO == null) {
+		   return opDO;
+		}
+		
+#if(${table.getTableConfig().bIntegrity()} == true)	
+		    //调用完整性比较方法
+		    methodUtils.compareInteg(opDO);	
+#end
+#if(${table.getTableConfig().bConfidentiality()} == true)
+	     //对于机密性和完整性，由于算法不同，所以分开考虑---获得被保护的机密性字段
+		  String conf = opDO.get$!{method_getConf}();
+		  if (conf == null) {
+		    logger.warn("数据库中该机密性字段为空");
+			return opDO;
+		  }
+		 String bytesToString = methodUtils.getConfEncodedResult(conf);
+		 
+#end          
+      

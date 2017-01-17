@@ -1,0 +1,53 @@
+{
+  "name": "xss",
+  "version": "0.2.7",
+  "homepage": "https://github.com/leizongmin/js-xss",
+  "authors": [
+    "Zongmin Lei <leizongmin@gmail.com>"
+  ],
+  "description": "Sanitize untrusted HTML (to prevent XSS) with a configuration specified by a Whitelist. 根据白名单过滤HTML(防止XSS攻击)",
+  "main": "dist/xss.js",
+  "moduleType": [
+    "globals",
+    "node",
+    "amd"
+  ],
+  "keywords": [
+    "sanitization",
+    "xss",
+    "sanitize",
+    "sanitisation",
+    "input",
+    "security",
+    "escape",
+    "encode",
+    "filter",
+    "validator",
+    "html",
+    "injection",
+    "whitelist"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "benchmark",
+    "bin",
+    "example",
+    "build.cmd",
+    "bower_register.cmd",
+    "coverage.html"
+  ],
+  "_release": "0.2.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.7",
+    "commit": "a5f4febdf0e9336198d5936f3188caa5b8f51c50"
+  },
+  "_source": "git://github.com/leizongmin/js-xss.git",
+  "_target": "~0.2.7",
+  "_originalSource": "xss"
+}

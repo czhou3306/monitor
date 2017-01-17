@@ -1,0 +1,36 @@
+##根据不同情况渲染返回值情况，区分*和多查询字段问题
+#if(${operation.getAllField()} < 0) ##当不是select *的时候
+#if(${operation.getField()} < 0)  ##当是select XX from tableName时
+        //将机密后的字段放入查询时做了保护性的字段
+	    temp.add(finalStringValue);
+		 }
+	    return temp;
+	
+#else 
+#if(${table.getTableConfig().bConfidentiality()} == true)
+##parse ("operation/dynamic-extends.vm")
+          opDO.set$!{finalRet}(bytesToString);
+          temp.add(opDO);
+		  }
+          return temp;
+		  
+#else
+           }
+          return getSqlMapClientTemplate().queryForList("${operation.mappedStatementId}", ${paramName});
+		  
+#end
+#end
+#else
+#if(${table.getTableConfig().bConfidentiality()} == true)
+##parse ("operation/dynamic-extends.vm")
+          opDO.set$!{finalRet}(bytesToString);
+          temp.add(opDO);
+		  }
+          return temp;
+	
+#else
+            }
+          return getSqlMapClientTemplate().queryForList("${operation.mappedStatementId}", ${paramName});
+		 
+#end
+#end

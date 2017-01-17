@@ -1,0 +1,102 @@
+{
+#if (${operation.paramType} == "object")
+    	if (${operation.param.name} == null) {
+    		throw new IllegalArgumentException("Can't insert a null data object into db.");
+    	}
+         ##//获得mapping语句 
+        ##String oriSql = "${operation.mappedStatementSql}"; 
+#if(${table.getTableConfig().bConfidentiality()} == true)
+        //机密性保护操作
+        getConfResultForInsert(${operation.param.name});
+#end
+#if(${table.getTableConfig().bIntegrity()} == true)
+	    //完整性保护
+		getIntegResultForInsert(${operation.param.name});
+#end    
+ 
+	    getSqlMapClientTemplate().insert("${operation.mappedStatementId}", ${operation.param.name});
+
+        return ${operation.param.name}.${table.iwPkColumn.getterName}();
+#else
+## Not supported yet.
+#parse ("operation/not-support.vm")
+#end
+}   
+#if(${table.getTableConfig().bIntegrity()} == true)
+       /**
+       * 插入操作的完整性保护方法
+       * @param student
+       */
+     private void getIntegResultForInsert(${table.getQualifiedDOClassName()} ${operation.param.name}) {
+
+		//要生成摘要字段的内容
+		String integritymes = ${operation.param.name}.get${finalI}();
+		if (integritymes == null || integritymes.length() == 0) {
+		   logger.warn("要生成摘要字段数值为空，请确认");
+		   throw new IllegalArgumentException("要生成摘要字段数值为空，请确认");
+		}
+		
+	    //kmi处取密钥 
+	    KmiResult keyresult2 = methodUtils.getKmiResultInteg(abstractKeyName,appName,0);
+		//将数值转化为byte
+		byte[] confBytes = integritymes.getBytes();
+		//从kmi处取得的密钥是Base64的密文，故解密
+		byte[] keyBytes = Base64.decode(keyresult2.getKeyData());
+		
+		byte[] cipherBytes = null;
+		String abstractValue = null;
+		//加密
+		try {
+			cipherBytes = CalculateMacUtil.calMac(confBytes, keyBytes, "HmacSHA256");
+			//对摘要字段进行Base64编码
+		    abstractValue = Base64.encode(cipherBytes);
+		} catch (GeneralSecurityException e) {
+			logger.error("加密出现异常");
+			throw new RuntimeException("插入数据时完整性加密出错",e);
+		}
+		
+        StringBuffer sb = new StringBuffer();
+		//存储的加密字段为密文@version
+		String abstractFinalValue = sb.append(abstractValue).append("@").append(abstractKeyName).append("#").append(keyresult2.getVersion()).toString();
+		${operation.param.name}.set$!{method2_getInteg}(abstractFinalValue);
+       }
+#end
+
+
+#if(${table.getTableConfig().bConfidentiality()} == true)
+      /**
+       * 插入操作的机密性保护方法
+       * @param student
+       */
+      private void getConfResultForInsert(${table.getQualifiedDOClassName()} ${operation.param.name}) {
+
+		//获得要加密字段的数值
+	    String confidentialitymes = ${operation.param.name}.get${finalRet}();
+	    if (confidentialitymes == null || confidentialitymes.length() == 0) {
+		   logger.warn("要加密字段数值为空，请确认");
+		   throw new IllegalArgumentException("要加密字段数值为空，请确认");
+		}
+		//kmi处取密钥 
+	    KmiResult keyResult = methodUtils.getKmiResultConf(encodeKeyName,appName,0);
+		//将数值转化为byte
+		byte[] confBytes = confidentialitymes.getBytes();
+		//从kmi处取得的密钥是Base64的密文，故解密
+		byte[] keyBytes = Base64.decode(keyResult.getKeyData());
+		
+		byte[] cipherBytes = null;
+		String encodedValue = null;
+		//加密
+		try {
+			cipherBytes = SymmtricCryptoUtil.symmtricCrypto(confBytes, keyBytes, "AES", Cipher.ENCRYPT_MODE);
+			//对加密数据进行Base64编码
+		    encodedValue = Base64.encode(cipherBytes);
+		} catch (GeneralSecurityException e) {
+			logger.error("加密出现异常");
+			throw new RuntimeException("插入数据时机密性加密出错",e);
+		}
+		StringBuffer sb = new StringBuffer();
+		//存储的加密字段为密文@version
+		String finalValue = sb.append(encodedValue).append("@").append(encodeKeyName).append("#").append(keyResult.getVersion()).toString();				
+		${operation.param.name}.set$!{method_getConf}(finalValue);
+	   }
+#end

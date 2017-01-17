@@ -1,0 +1,55 @@
+<div ng-controller="addComputeFormulaController">
+
+    <form class="form-horizontal" role="form">
+
+        <div class="form-group">
+            <label for="fileId" class="col-sm-2 control-label">文件id</label>
+            <div class="col-sm-2">
+                <input ng-model="fileId" type="text" class="form-control" id="fileId"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="computeName" class="col-sm-2 control-label">计算名称</label>
+            <div class="col-sm-2">
+                <input ng-model="computeName" type="text" class="form-control" id="computeName"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="functionName" class="col-sm-2 control-label"> 统计函数</label>
+            <div class="col-sm-2">
+                <input ng-model="functionName" type="text" class="form-control" id="functionName"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="position" class="col-sm-2 control-label">字段位置</label>
+            <div class="col-sm-2">
+                <input ng-model="position" type="text" class="form-control" id="position"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="filterCondition" class="col-sm-2 control-label">过滤条件</label>
+            <div class="col-sm-8">
+                <input ng-model="filterCondition" type="text" class="form-control" id="filterCondition"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" ng-click="addComputeFormula()" class="btn btn-default">保存采集公式</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">文件id:{{computeId}}</label>
+
+        </div>
+
+    </form>
+
+</div>

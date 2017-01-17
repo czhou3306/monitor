@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<table sqlname="monitor_formula">
+    <operation name="getAll" paramtype="private" multiplicity="many">
+        <sql>
+            <![CDATA[
+				select id,monitor_id,file_id,monitor_name,show_field,formula,gmt_create,gmt_modified from monitor_formula
+            ]]>
+        </sql>
+    </operation>
+    
+	<operation name="insert" paramtype="Object">
+        <sql>
+            <![CDATA[
+				insert into monitor_formula(monitor_id,file_id,monitor_name,show_field,formula,gmt_create,gmt_modified) values(?,?,?,?,?,?,?)
+            ]]>
+        </sql>
+		<sqlmap>
+		<![CDATA[
+				insert into monitor_formula(monitor_id,file_id,monitor_name,show_field,formula,gmt_create,gmt_modified) values(#monitorId#,#fileId#,#monitorName#,#showField#,#formula#,now(),now())
+            ]]>
+		</sqlmap>
+    </operation>
+	
+	<operation name="update" paramtype="Object">
+        <sql>
+            <![CDATA[
+				update monitor_formula set monitor_name=?,show_field=?,formula=? where monitor_id=?
+            ]]>
+        </sql>
+		<sqlmap>
+		<![CDATA[
+				update monitor_formula set monitor_name=#monitorName#,show_field=#showField#,formula=#formula# ,gmt_modified=now() where monitor_id=#monitorId#
+            ]]>
+		</sqlmap>
+    </operation>
+</table>
+  
+  

@@ -1,0 +1,34 @@
+##operation.getAllField方法用来区分是否是select *格式 
+#if(${operation.getAllField()} < 0)
+##operation.getField方法小于0时，说明查询的字段只有一个
+#if(${operation.getField()} < 0) 
+##当返回一个字段的时候，要考虑该字段的返回值类型
+#if (${operation.returnTypePrimitive})
+	 ##将得到的String类型的数值转成基本数据类型所对应的引用数据类型
+${operation.simpleReturnTypeForPrimitive} retObj = new ${operation.simpleReturnTypeForPrimitive}(finalStringValue);
+	 ##转成基本数据类型
+	 return retObj.${operation.simpleReturnType}Value();
+		
+#else
+	   
+         return finalStringValue;
+
+#end 
+#else
+#if(${table.getTableConfig().bConfidentiality()} == true)
+##parse ("operation/dynamic-extends.vm")
+       opDO.set$!{finalRet}(bytesToString);
+          return opDO;
+#else 
+        return (${operation.simpleReturnType}) getSqlMapClientTemplate().queryForObject("${operation.mappedStatementId}", ${paramName});
+#end
+#end
+#else
+	 #if(${table.getTableConfig().bConfidentiality()} == true)
+##parse ("operation/dynamic-extends.vm")
+        opDO.set$!{finalRet}(bytesToString);
+          return opDO;
+#else 
+        return (${operation.simpleReturnType}) getSqlMapClientTemplate().queryForObject("${operation.mappedStatementId}", ${paramName});
+#end
+#end

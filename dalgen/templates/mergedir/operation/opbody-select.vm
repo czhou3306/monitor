@@ -1,0 +1,7 @@
+##区分用户是否配置机密性及完整性字段
+##如果配置机密性及完整性
+#if((${table.getTableConfig().bConfidentiality()} == true)||(${table.getTableConfig().bIntegrity()} == true))
+#parse ("operation/opbody-select-new.vm")
+#else
+#parse ("operation/opbody-select-old.vm")
+#end	

@@ -1,0 +1,1 @@
+nohup java -Xms64m -Xmx64m -Xmn32m -Xss256k -verbosegc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -jar monitor-agent-1.0.0.jar config.properties

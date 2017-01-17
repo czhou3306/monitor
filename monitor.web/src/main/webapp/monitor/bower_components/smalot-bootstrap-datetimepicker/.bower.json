@@ -1,0 +1,29 @@
+{
+  "name": "smalot-bootstrap-datetimepicker",
+  "main": [
+    "js/bootstrap-datetimepicker.min.js",
+    "css/bootstrap-datetimepicker.min.css"
+  ],
+  "ignore": [
+    "build",
+    "sample in bootstrap v2",
+    "sample in bootstrap v3",
+    "screenshot",
+    "tests",
+    ".gitattributes",
+    ".gitignore",
+    ".travis.yml",
+    "minify.sh"
+  ],
+  "homepage": "https://github.com/smalot/bootstrap-datetimepicker",
+  "version": "2.4.2",
+  "_release": "2.4.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.4.2",
+    "commit": "fa61e1f6983b91a59e9250f3317d379f41507710"
+  },
+  "_source": "https://github.com/smalot/bootstrap-datetimepicker.git",
+  "_target": "2.4.2",
+  "_originalSource": "smalot-bootstrap-datetimepicker"
+}

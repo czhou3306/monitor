@@ -1,0 +1,106 @@
+<div ng-controller="queryComputeFormulaController">
+
+    <table class="table table-hover">
+
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>字段名称</th>
+            <th>字段位置</th>
+            <th>所属文件</th>
+            <th>过滤条件</th>
+            <th>计算类型</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="data in dataList">
+            <td>{{data.computeId}}</td>
+            <td>{{data.computeName}}</td>
+            <td>{{data.fieldPosition}}</td>
+            <td>{{data.fileId}}</td>
+            <td>{{data.filterCondition}}</td>
+            <td>{{data.formulaType}}</td>
+            <td><button ng-click="openModal(data)" type="button" class="btn btn-default">更新</button></td>
+        </tr>
+
+        </tbody>
+    </table>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade bs-example-modal-lg" id="updateComputeFormulaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        采集文件信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label for="fileId" class="col-sm-2 control-label">文件id</label>
+                            <div class="col-sm-2">
+                                <input ng-model="chooseRecord.fileId" type="text" class="form-control" id="fileId"
+                                       placeholder="请输入名字">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="computeId" class="col-sm-2 control-label">计算id</label>
+                            <div class="col-sm-8">
+                                <input ng-model="chooseRecord.computeId" type="text" class="form-control" id="computeId"
+                                       placeholder="请输入名字">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="computeName" class="col-sm-2 control-label">计算名称</label>
+                            <div class="col-sm-8">
+                                <input ng-model="chooseRecord.computeName" type="text" class="form-control" id="computeName"
+                                       placeholder="请输入名字">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="functionName" class="col-sm-2 control-label"> 统计函数</label>
+                            <div class="col-sm-8">
+                                <input ng-model="chooseRecord.formulaType" type="text" class="form-control" id="functionName"
+                                       placeholder="请输入名字">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="position" class="col-sm-2 control-label">字段位置</label>
+                            <div class="col-sm-8">
+                                <input ng-model="chooseRecord.fieldPosition" type="text" class="form-control" id="position"
+                                       placeholder="请输入名字">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterCondition" class="col-sm-2 control-label">过滤条件</label>
+                            <div class="col-sm-8">
+                                <input ng-model="chooseRecord.filterCondition" type="text" class="form-control" id="filterCondition"
+                                       placeholder="请输入名字">
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+
+                    <button type="button" ng-click="updateComputeFormula(chooseRecord.fileId,chooseRecord.computeId,chooseRecord.computeName,chooseRecord.formulaType,chooseRecord.fieldPosition,chooseRecord.filterCondition)" class="btn btn-primary">
+                        提交更改
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>

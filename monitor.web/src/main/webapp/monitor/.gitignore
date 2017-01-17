@@ -1,0 +1,13 @@
+/node_modules/
+.project
+.classpath
+.settings
+*.iml
+*/*.iml
+*.ipr
+*.iws
+.idea/
+.geany
+/node_modules
+*/node_modules
+node_modules/

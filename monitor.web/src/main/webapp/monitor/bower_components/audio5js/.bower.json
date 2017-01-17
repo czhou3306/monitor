@@ -1,0 +1,18 @@
+{
+  "name": "audio5",
+  "main": [
+    "./audio5.js",
+    "./audio5.min.js",
+    "./audio5js.swf"
+  ],
+  "homepage": "https://github.com/zohararad/audio5js-bower",
+  "_release": "d91973b98f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d91973b98fa8dd6bc134592426d922c43d21675c"
+  },
+  "_source": "git://github.com/zohararad/audio5js-bower.git",
+  "_target": "*",
+  "_originalSource": "audio5js"
+}

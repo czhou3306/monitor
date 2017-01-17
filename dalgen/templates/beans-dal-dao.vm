@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="byName">
+    <!-- ======================================================================== -->
+    <!--  DAO                                                           -->
+    <!-- ======================================================================== -->
+#foreach ($table in $plugin.sortedTables)
+#set ($parent = "baseSqlMapClientDAO")
+#if (${table.isAutoSwitchDataSrc})
+#set ($parent = "autoSwitchDataSrcBaseSqlMapClientDAO")
+#end
+#if(${table.getTableConfig().getDrmConfig()} == true||(${table.getTableConfig().bConfidentiality()} == true)||(${table.getTableConfig().bIntegrity()} == true))
+    <bean id="${table.beanName}DAO" class="${table.package}.ibatis.Ibatis${table.baseClassName}DAO" parent="$parent" init-method="register">
+			<property name = "methodUtils" ref = "methodUtils"/>
+    </bean>
+	<bean id = "methodUtils" class = "${table.package}.utils.${table.baseClassName}Utils">
+		<property name = "kmiClient" ref ="kmiClient"/>
+	</bean>
+#else
+    <bean id="${table.beanName}DAO" class="${table.package}.ibatis.Ibatis${table.baseClassName}DAO" parent="$parent"/>
+#end
+#end
+		
+</beans>

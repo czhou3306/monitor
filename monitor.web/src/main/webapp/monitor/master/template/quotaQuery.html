@@ -1,0 +1,29 @@
+<div ng-controller="quotaQueryController">
+
+<div class="col-xs-12">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{colNames[colNames.length-1]}}</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th ng-repeat="colName in colNames track by $index">{{colName}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in records track by $index">
+                    <td ng-repeat="col in row track by $index">{{col}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+    <!--<div class="col-xs-6" line-chart title="{{colNames[colNames.length-1]}}" categories="{{categories}}" yaxis="{{colNames[colNames.length-1]}}" series="{{series}}"></div>-->
+
+</div>

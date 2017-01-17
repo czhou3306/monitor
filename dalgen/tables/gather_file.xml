@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<table sqlname="gather_file">
+    <operation name="getAll" paramtype="private" multiplicity="many">
+        <sql>
+            <![CDATA[
+				select id,file_id,system_name,file_path,split_regex,group_field_position,instance,gather_type,gmt_create,gmt_modified from gather_file
+            ]]>
+        </sql>
+    </operation>
+	
+	<operation name="insert" paramtype="Object">
+        <sql>
+            <![CDATA[
+				insert into gather_file(file_id,system_name,file_path,split_regex,group_field_position,instance,gather_type,gmt_create,gmt_modified) values(?,?,?,?,?,?,?,?,?)
+            ]]>
+        </sql>
+		<sqlmap>
+		<![CDATA[
+				insert into gather_file(file_id,system_name,file_path,split_regex,group_field_position,instance,gather_type,gmt_create,gmt_modified) values(#fileId#,#systemName#,#filePath#,#splitRegex#,#groupFieldPosition#,#instance#,#gatherType#,now(),now())
+            ]]>
+		</sqlmap>
+    </operation>
+	
+	<operation name="update" paramtype="Object">
+        <sql>
+            <![CDATA[
+				update gather_file set system_name=?,file_path=?,split_regex=?,group_field_position=?,instance=?,gather_type=? where file_id=?
+            ]]>
+        </sql>
+		<sqlmap>
+		<![CDATA[
+				update gather_file set system_name=#systemName#,file_path=#filePath#,split_regex=#splitRegex#,group_field_position=#groupFieldPosition#,instance=#instance#,gather_type=#gatherType#, gmt_modified=now() where file_id=#fileId#
+            ]]>
+		</sqlmap>
+    </operation>
+	
+	
+    
+</table>
+  
+  

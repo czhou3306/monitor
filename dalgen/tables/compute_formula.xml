@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<table sqlname="compute_formula">
+    <operation name="getAll" paramtype="private" multiplicity="many">
+        <sql>
+            <![CDATA[
+				select id,compute_id,compute_name,file_id,formula_type,field_position,filter_condition,gmt_create,gmt_modified from compute_formula
+            ]]>
+        </sql>
+    </operation>
+    
+	 <operation name="getByFileId" paramtype="private" multiplicity="many">
+        <sql>
+            <![CDATA[
+				select id,compute_id,compute_name,file_id,formula_type,field_position,filter_condition,gmt_create,gmt_modified from compute_formula where file_id=?
+            ]]>
+        </sql>
+    </operation>
+	
+	<operation name="insert" paramtype="Object">
+        <sql>
+            <![CDATA[
+				insert into compute_formula(compute_id,compute_name,file_id,formula_type,field_position,filter_condition,gmt_create,gmt_modified) values(?,?,?,?,?,?,?,?)
+            ]]>
+        </sql>
+		<sqlmap>
+		<![CDATA[
+				insert into compute_formula(compute_id,compute_name,file_id,formula_type,field_position,filter_condition,gmt_create,gmt_modified) values(#computeId#,#computeName#,#fileId#,#formulaType#,#fieldPosition#,#filterCondition#,now(),now())
+            ]]>
+		</sqlmap>
+    </operation>
+	
+	<operation name="update" paramtype="Object">
+        <sql>
+            <![CDATA[
+				update compute_formula set compute_name=?,formula_type=?,field_position=?,filter_condition=? where compute_id=?
+            ]]>
+        </sql>
+		<sqlmap>
+		<![CDATA[
+		update compute_formula set compute_name=#computeName#,formula_type=#formulaType#,field_position=#fieldPosition#,filter_condition=#filterCondition#,gmt_modified=now() where compute_id=#computeId#
+            ]]>
+		</sqlmap>
+    </operation>
+	
+</table>
+  
+  

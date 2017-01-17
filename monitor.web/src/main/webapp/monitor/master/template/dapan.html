@@ -1,0 +1,39 @@
+<div ng-controller="dapanController">
+    <div class="form-group col-xs-12">
+
+    <div>
+        <div class="col-xs-1" >开始时间</div>
+        <div class="input-group date form_datetime col-xs-3">
+            <input class="form-control" size="16" type="text" value="" ng-model="beginDate" readonly>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+        </div>
+        <div class="col-xs-1">结束时间</div>
+        <div class="input-group date form_datetime col-xs-3">
+            <input class="form-control" size="16" type="text" value="" ng-model="endDate" readonly>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+        </div>
+    </div>
+        <div>
+            <button class="btn btn-default" ng-click="refresh()" type="submit">查询</button>
+            <button type="button" ng-click="changeAutoRefresh()" class="btn btn-success"><span ng-if="autorefresh">关闭</span><span ng-if="!autorefresh">开启</span>自动刷新</button>
+            <select id="timeGroup" style="width:10%" class="form-control col-xs-2" ng-model="timeGroup">
+                <option value="M" selected="selected">分钟</option>
+                <option value="TM">10分钟</option>
+                <option value="H">小时</option>
+            </select>
+        </div>
+    </div>
+
+    <div ng-controller="quotaQueryController" ng-init="monitorId=1974;">
+        <div class="col-xs-6" line-chart title="登录次数" all-col="true" categories="{{categories}}" yaxis="登录次数" series="{{series}}"></div>
+    </div>
+    <div ng-controller="quotaQueryController" ng-init="monitorId=1975;">
+        <div class="col-xs-6" line-chart title="充值笔数" categories="{{categories}}" yaxis="充值笔数" series="{{series}}"></div>
+    </div>
+    <div ng-controller="quotaQueryController" ng-init="monitorId=1976;">
+        <div class="col-xs-6" line-chart title="下单笔数" categories="{{categories}}" yaxis="下单笔数" series="{{series}}"></div>
+    </div>
+    <div ng-controller="quotaQueryController" ng-init="monitorId=1977;">
+        <div class="col-xs-6" line-chart title="支付笔数" categories="{{categories}}" yaxis="支付笔数" series="{{series}}"></div>
+    </div>
+</div>

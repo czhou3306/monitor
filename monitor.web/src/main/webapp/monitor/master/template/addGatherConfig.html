@@ -1,0 +1,102 @@
+<div ng-controller="gatherConfigController">
+
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="systemName" class="col-sm-2 control-label">系统名</label>
+            <div class="col-sm-2">
+                <input ng-model="systemName" type="text" class="form-control" id="systemName"
+                       placeholder="请输入名字">
+            </div>
+            <label for="gatherType" class="col-sm-2 control-label">采集类型</label>
+            <div class="col-sm-2">
+                <input ng-model="gatherType" type="text" class="form-control" id="gatherType"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="filePath" class="col-sm-2 control-label">文件路径</label>
+            <div class="col-sm-8">
+                <input ng-model="filePath" type="text" class="form-control" id="filePath"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="regex" class="col-sm-2 control-label">分隔符</label>
+            <div class="col-sm-8">
+                <input ng-model="regex" type="text" class="form-control" id="regex"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="instance" class="col-sm-2 control-label">行样例</label>
+            <div class="col-sm-6">
+                <input ng-model="instance" type="text" class="form-control" id="instance"
+                       placeholder="请输入名字">
+            </div>
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-default">分割</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="groupFields" class="col-sm-2 control-label">分组字段</label>
+            <div class="col-sm-8">
+                <input ng-model="groupFields" type="text" class="form-control" id="groupFields"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" class="btn btn-default">保存采集的文件</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="functionName" class="col-sm-2 control-label"> 统计函数</label>
+            <div class="col-sm-2">
+                <input ng-model="functionName" type="text" class="form-control" id="functionName"
+                       placeholder="请输入名字">
+            </div>
+            <label for="position" class="col-sm-2 control-label">字段位置</label>
+            <div class="col-sm-2">
+                <input ng-model="position" type="text" class="form-control" id="position"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="filterCondition" class="col-sm-2 control-label">过滤条件</label>
+            <div class="col-sm-8">
+                <input ng-model="filterCondition" type="text" class="form-control" id="filterCondition"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" ng-click="submit()" class="btn btn-default">保存采集公式</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="showField" class="col-sm-2 control-label">展示字段</label>
+            <div class="col-sm-8">
+                <input ng-model="showField" type="text" class="form-control" id="showField"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="monitorFormula" class="col-sm-2 control-label">计算公式</label>
+            <div class="col-sm-8">
+                <input ng-model="monitorFormula" type="text" class="form-control" id="monitorFormula"
+                       placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" ng-click="submit()" class="btn btn-default">保存监控指标</button>
+            </div>
+        </div>
+
+    </form>
+
+</div>

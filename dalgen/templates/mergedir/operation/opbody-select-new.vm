@@ -1,0 +1,48 @@
+{
+##if(${operation.count} == false) 
+#if (! ${operation.paging})
+#if (${operation.multiplicity} == "many")
+
+## prepare parameters
+#if (${operation.params.size()} == 0)
+	
+#set ($paramName = "null")
+#parse ("operation/select-in.vm")
+#parse ("operation/select-end.vm")        
+
+#elseif (${operation.params.size()} == 1)
+#if (${operation.param.javaTypePrimitive})
+        ${operation.param.simpleJavaTypeForPrimitive} param = new ${operation.param.simpleJavaTypeForPrimitive}(${operation.param.name});
+#set ($paramName = "param")
+
+#parse ("operation/select-in.vm")
+#parse ("operation/select-end.vm")
+#else
+#set ($paramName = ${operation.param.name})
+#parse ("operation/select-in.vm")
+#parse ("operation/select-end.vm")
+#end
+#else
+        Map<String,Object> param = new HashMap<String,Object>();
+
+#foreach ($param in ${operation.params})
+#if ($param.javaTypeForPrimitive)
+        param.put("${param.name}", new ${param.simpleJavaTypeForPrimitive}(${param.name}));
+#else
+        param.put("${param.name}", ${param.name});
+#end
+#end
+#set ($paramName = "param")
+#parse ("operation/select-in.vm")
+#parse ("operation/select-end.vm")    
+#end
+#else
+#parse ("operation/opbody-single-select.vm")
+#end
+#else
+#parse ("operation/paging-select-in.vm")
+#end
+##else
+##parse ("operation/opbody-select-old.vm")
+##end
+}

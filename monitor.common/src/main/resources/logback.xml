@@ -1,0 +1,229 @@
+<configuration>
+    <property file="${user.home}/config/monitor/log.properties" />
+    <property file="${user.home}/config/common/monitor.properties" />
+
+    <timestamp key = "tt_pattern" pattern = "yyyy-MM-dd"/>
+    <property name = "file_size" value = "1024MB"/>
+    <property name = "framework_file_size" value = "2048MB"/>
+    <property name = "max_log_files" value = "30"/>
+
+
+    <property name = "monitor.common.config" value="${user.home}/config/common/monitor.properties" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %uuid%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志（框架 + 业务） -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${monitor.log.path}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${monitor.log.path}/%d{yyyy-MM-dd}/error.log</fileNamePattern>
+            <maxHistory>${max_log_files}</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] %logger{36} [%file : %line] %uuid%msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 框架日志 -->
+    <appender name="FRAMEWORK" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${monitor.log.path}/framework.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${monitor.log.path}/framework/framework-%d{yyyy-MM-dd_HH-mm}-%i.log</fileNamePattern>
+            <minIndex>0</minIndex>
+            <minIndex>100</minIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${framework_file_size}</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %uuid%msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="org.apache.ibatis" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="org.springframework" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="com.alibaba" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="org.apache.zookeeper" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="org.I0Itec" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="org.quartz" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="org.hibernate" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="org.mybatis" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="com.mysql" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="com.mongodb" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="com.oracle" level="${monitor.log.level}" additivity="false">
+        <appender-ref ref="FRAMEWORK"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <!-- 业务日志 -->
+    <appender name="BIZ" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${monitor.log.path}/biz.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${monitor.log.path}/%d{yyyy-MM-dd}/biz.log</fileNamePattern>
+            <maxHistory>${max_log_files}</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %uuid%msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 摘要日志 -->
+    <appender name="DIGEST" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${monitor.log.path}/digest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${monitor.log.path}/%d{yyyy-MM-dd}/digest.log</fileNamePattern>
+            <maxHistory>${max_log_files}</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %uuid%msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="digest_log" level="INFO" additivity="false">
+        <appender-ref ref="DIGEST"/>
+    </logger>
+    
+    
+     <!-- 摘要日志 -->
+    <appender name="REMOTE_DIGEST_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${monitor.log.path}/remote-digest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${monitor.log.path}/%d{yyyy-MM-dd}/remote-digest.log</fileNamePattern>
+            <maxHistory>${max_log_files}</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level %msg%uuid%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="remote_digest_log" level="INFO" additivity="false">
+        <appender-ref ref="REMOTE_DIGEST_LOG"/>
+    </logger>
+
+    <!-- 性能日志 -->
+    <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${monitor.log.path}/perf.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${monitor.log.path}/%d{yyyy-MM-dd}/perf.log</fileNamePattern>
+            <maxHistory>${max_log_files}</maxHistory>
+        </rollingPolicy>
+
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date %level [%thread] [%file : %line] %uuid%msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="perf_log" level="INFO" additivity="false">
+        <appender-ref ref="PERF"/>
+    </logger>
+
+    <logger name="monitor_log" level="INFO" additivity="false">
+        <appender-ref ref="MONGODB"/>
+    </logger>
+    
+     <logger name="com.qiangungun.monitor" level="INFO" additivity="false">
+        <appender-ref ref="BIZ"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root level="${monitor.log.level}">
+        <appender-ref ref="STDOUT"/>
+        <!--<appender-ref ref="FRAMEWORK"/>-->
+        <appender-ref ref="BIZ"/>
+        <appender-ref ref="ERROR"/>
+    </root>
+</configuration>

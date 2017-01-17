@@ -1,0 +1,65 @@
+##渲染中间部分
+	  //判断开关是否开
+  	  if (this.getPower() == false) {
+  		  //直接从原字段取值
+  		return (${operation.simpleReturnType})getSqlMapClientTemplate().queryForList("${operation.mappedStatementId}", ${paramName});
+  	  }
+  	   //当开关开时，从新字段取数值
+		${table.DOClassName} opDO = new ${table.DOClassName}();
+		
+		${operation.simpleReturnType} tempValue = (${operation.simpleReturnType})getSqlMapClientTemplate().queryForList("${operation.mappedStatementId}", ${paramName});
+		
+		if (CollectionUtils.isEmpty(tempValue)){
+		    return tempValue;
+		}
+		
+#if(${table.getTableConfig().bIntegrity()} == true)	
+	    for (int i = 0 ; i < tempValue.size(); i++) {
+			opDO = tempValue.get(i);
+		    //调用完整性比较方法
+		    methodUtils.compareInteg(opDO);
+		   }
+#end
+		//对于机密性和完整性，由于算法不同，所以分开考虑
+		${operation.simpleReturnType} temp = new ArrayList<${table.DOClassName}>();
+		for (int i = 0 ; i < tempValue.size(); i++) {
+		    opDO = tempValue.get(i);
+#if(${table.getTableConfig().bConfidentiality()} == true)        
+		  //获得被保护的机密性字段
+		  String conf = opDO.get$!{method_getConf}();
+		  if (conf == null) {
+		    logger.warn("数据库中该机密性字段为空");
+			temp.add(opDO);
+			continue;
+		  }
+		  //取得加密字段值
+		  int encodeStart = StringUtil.indexOfAny(conf,"@");
+		  String tempEncodeValue = StringUtil.substring(conf,0,encodeStart);
+		  //取得keyname及version
+		  int versionStart = StringUtil.indexOfAny(conf,"#");
+		  String keyname = StringUtil.substring(conf,encodeStart+1,versionStart);
+		  int versionFromDB = Integer.parseInt(StringUtil.substring(conf,versionStart + 1,conf.length()));
+		   //将要解密的密文进行Base64解码
+		  byte[] encodeValueBytes = Base64.decode(tempEncodeValue);
+		  //对取出来的机密性字段做解密=====
+		  //取密钥
+		  KmiResult keyData = methodUtils.getKmiResultConf(keyname,appName,versionFromDB);
+		  //将该字段进行Base64解码
+		  byte[] bytes = Base64.decode(keyData.getKeyData()); 
+		  //解密
+		  byte[] resultBytes = null;
+		  String bytesToString = null;
+		  try {
+			resultBytes = SymmtricCryptoUtil.symmtricCrypto(encodeValueBytes, bytes, "AES", Cipher.DECRYPT_MODE);
+			//将解密后的数据转换为String类型
+		    bytesToString = new String(resultBytes);
+		  } catch (GeneralSecurityException e) {
+			logger.error("解密错误");
+			 throw new RuntimeException("数据机密性解密出错",e);
+		  }
+		  
+		  
+		  ##//获得查询结果
+		   ##temp = (${operation.simpleReturnType})getSqlMapClientTemplate().queryForList("${operation.mappedStatementId}", ${paramName});
+          
+#end      

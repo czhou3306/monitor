@@ -1,0 +1,415 @@
+package ${table.getUtilsPackage()};
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import com.pinganfu.common.util.PageList;
+import javax.crypto.Cipher;
+
+import org.codehaus.xfire.util.Base64;
+
+import java.security.GeneralSecurityException;
+
+/**
+ * �ӽ��ܹ���������
+ * �����а������漰�ӽ��ܵĹ�������
+ */
+public class ${table.getUtilClassName()} {
+
+    /** ��ͨ��־ */
+    public static final Logger        logger = LoggerFactory.getLogger(${table.getUtilClassName()}.class);
+    //��������Լ������Ի���
+	static Map<Integer,KmiResult> hashMapInteg = new HashMap<Integer, KmiResult>();
+	static Map<Integer,KmiResult> hashMapConf = new HashMap<Integer, KmiResult>();
+			
+	public static final String appName = "${plugin.getAppName()}";
+    public static final String encodeKeyName = "${table.getTableConfig().getEncodekeyname()}";
+    public static final String abstractKeyName = "${table.getTableConfig().getAbstractkeyname()}";
+			
+	public KmiClient kmiClient = null;
+	
+	#if(${table.getTableConfig().bConfidentiality()} == true)   
+     /**
+     * KMI��ȡ��Կ--������
+     * @param keyName:��Կ����
+     * @param appName:Ӧ��ϵͳ��
+     * @param version���汾��
+     * @return KmiResult
+	 * ����˵��һ�����ͻ��˻����������£��״ν���insert�����������hashMapConf.get(0)���жϣ���ʱ����version=0ȥKMI��ȡ���µ�
+	 *          ��ԿkmiResultForInsert������key=0,value=kmiResultForInsert���ڻ��浱�С���������պ��״ν��з�insert��������
+	 *          ��ʱ����versionһ������0 ����ôҲ�����ȡ������ԿkmiResultForInsert�Ĺ�̣�Ȼ���ж�֪version != 0�����Ի��kmi��
+	 *          ȡ��version���Ӧ��kmiresult�����Ҵ洢�ڻ����С�Ҳ����˵����������պ��״ν���insert֮�󣬻�����ֻ��������Կ��Ϣ��
+	 *          �״ν���select����֮�󣬻����м���������Կ��Ϣ��Ҳ��select���Ӧversion����Կ��Ϣ��
+	 * ======= 
+	 * ����˵���������ͻ��˻���ǿ�����£�����insert����ʱ��hashMapConf.get(0)!=null������ж�version=0�����Է���hashMapConf.get(0);
+	 *           ���з�insert����ʱ��ֱ����hashMapConf.get(finalversion)���߼�������������ʱ���ӻ���ȡ��ݣ������kmi��ȡ��ݡ�
+     */
+   public KmiResult getKmiResultConf(String keyName,String appName,int version) {
+	   
+	   int finalversion = version;
+	   KmiResult kmiResultForInsert = null;
+	   KmiResult kmiResult = null;
+	   
+	   
+	   if (hashMapConf.get(0) == null) {
+	     kmiResultForInsert = kmiClient.getKey(keyName,appName,0);
+		 //�ж�ȡ�õ���Կ��Ϣ�Ƿ���
+		 if (!kmiResultForInsert.isSuccess()) {
+		    logger.warn("��ȡ��kmiResultʧ��");
+			throw new RuntimeException("��KMI����ȡ��Կʧ�ܣ��������ԭ��");
+		 }
+		 hashMapConf.put(0,kmiResultForInsert);
+	   }
+	   
+	   if (version == 0) {
+		  return hashMapConf.get(0);
+		}
+		else {
+
+	   if (hashMapConf.get(finalversion) != null) {
+		   kmiResult = hashMapConf.get(finalversion);
+		   return kmiResult;
+	   }
+    	//kmi��ȡ��Կ 
+    	kmiResult = kmiClient.getKey(keyName,appName,finalversion);
+        //�ж�ȡ�õ���Կ��Ϣ�Ƿ���
+		if (!kmiResult.isSuccess()) {
+		    logger.warn("��ȡ��kmiResultʧ��");
+			throw new RuntimeException("��KMI����ȡ��Կʧ�ܣ��������ԭ��");
+		 }
+		 
+		hashMapConf.put(kmiResult.getVersion(), kmiResult);
+		
+		return kmiResult;
+		}
+    }
+#end
+#if(${table.getTableConfig().bIntegrity()} == true)	  
+   /**
+    * KMI��ȡ��Կ--������
+    * @param keyName:��Կ����
+    * @param appName:Ӧ��ϵͳ��
+    * @param version���汾��
+    * @return KmiResult
+	* ����˵��һ�����ͻ��˻����������£��״ν���insert�����������hashMapInteg.get(0)���жϣ���ʱ����version=0ȥKMI��ȡ���µ�
+	 *          ��ԿkmiResultForInsert������key=0,value=kmiResultForInsert���ڻ��浱�С���������պ��״ν��з�insert��������
+	 *          ��ʱ����versionһ������0 ����ôҲ�����ȡ������ԿkmiResultForInsert�Ĺ�̣�Ȼ���ж�֪version != 0�����Ի��kmi��
+	 *          ȡ��version���Ӧ��kmiresult�����Ҵ洢�ڻ����С�Ҳ����˵����������պ��״ν���insert֮�󣬻�����ֻ��������Կ��Ϣ��
+	 *          �״ν���select����֮�󣬻����м���������Կ��Ϣ��Ҳ��select���Ӧversion����Կ��Ϣ��
+	 * ======= 
+	 * ����˵���������ͻ��˻���ǿ�����£�����insert����ʱ��hashMapInteg.get(0)!=null������ж�version=0�����Է���hashMapInteg.get(0);
+	 *           ���з�insert����ʱ��ֱ����hashMapInteg.get(finalversion)���߼�������������ʱ���ӻ���ȡ��ݣ������kmi��ȡ��ݡ�
+    */
+  public KmiResult getKmiResultInteg(String keyName,String appName,int version) {
+ 
+	    int finalversion = version;
+		KmiResult kmiResultForInsert = null;
+	    KmiResult kmiResult = null;
+		
+	  if (hashMapInteg.get(0) == null) {
+	     kmiResultForInsert = kmiClient.getKey(keyName,appName,0);
+		 //�ж�ȡ�õ���Կ��Ϣ�Ƿ���
+		 if (kmiResultForInsert.isSuccess() == false) {
+		    logger.warn("��ȡ��kmiResultʧ��");
+			throw new RuntimeException("��KMI����ȡ��Կʧ�ܣ��������ԭ��");
+		 }
+		 hashMapInteg.put(0,kmiResultForInsert);
+	   }
+	    if (version == 0) {
+		  return hashMapInteg.get(0);
+		}
+		else {
+   	
+	    if (hashMapInteg.get(finalversion) != null) {
+			 kmiResult = hashMapInteg.get(finalversion);
+			 return kmiResult;
+		   }
+   	     //kmi��ȡ��Կ 
+   	    kmiResult = kmiClient.getKey(keyName,appName,finalversion);
+		//�ж�ȡ�õ���Կ��Ϣ�Ƿ���
+		if (kmiResult.isSuccess() == false) {
+		    logger.warn("��ȡ��kmiResultʧ��");
+			throw new RuntimeException("��KMI����ȡ��Կʧ�ܣ��������ԭ��");
+		 }
+		
+		hashMapInteg.put(kmiResult.getVersion(), kmiResult);
+
+		return kmiResult;
+       }
+     }
+#end
+
+#if(${table.getTableConfig().bIntegrity()} == true)		
+	/**
+     * ������У��
+     * @param opDO
+     */
+	 public void compareInteg(${table.getQualifiedDOClassName()} opDO){
+	    
+	     //������У��ʱ�����ȴ���ݿ���ȡ��ҪУ���ժҪֵ
+		 String retInteg = opDO.get$!{method2_getInteg}();
+		 
+		  if (retInteg == null || retInteg.length() == 0) {
+			 logger.warn("��ݿ��и�ժҪ�ֶ�Ϊ��,�޷�����У��");
+			 return;
+		 }
+		 //����ݿ���ȡ�����ֶ����ȡkeyname
+		 int keynameStart = StringUtil.indexOfAny(retInteg,"@");
+		 int versionStart = StringUtil.indexOfAny(retInteg,"#");
+		 String keyname = StringUtil.substring(retInteg, keynameStart+1,versionStart);
+		 int versionValue = Integer.parseInt(StringUtil.substring(retInteg, versionStart + 1, retInteg.length()));
+	      //�����������У����ֶ�
+		 String integ = opDO.get$!{finalI}();
+		 if (integ == null || integ.length() ==0) {
+		     logger.warn("Ҫ���������ֶ�Ϊ��");
+			 return;
+		 }
+		 //��ȡ�������������һ�������Ա���
+		 //ȡ��Կ
+		 KmiResult keyResult = getKmiResultInteg(keyname,appName,versionValue);
+		 //������Կ����Base64����
+		  byte[] bytes = Base64.decode(keyResult.getKeyData()); 
+		 //���������Ա������ֶ�ת��Ϊ�ַ�
+          byte[] integBytes = integ.getBytes();
+          //�����Ա���
+		  byte[] cipherBytes = null;
+		  String abstractValue = null;
+           try {
+		       cipherBytes = CalculateMacUtil.calMac(integBytes,bytes,"HmacSHA256");
+			   //�����ժҪ�Ĳ��ֽ���base64����
+			   abstractValue = Base64.encode(cipherBytes);
+		   }
+            catch (GeneralSecurityException e) {
+			     logger.error("���ܳ����쳣");
+				 throw new RuntimeException("������У����ܳ���",e);
+			}
+			if (abstractValue == null || abstractValue.length() == 0) {
+			   logger.warn("У��������ʱ��������Ϊ�գ��޷�����У��");
+			   return;
+			}
+			 //�����ݿ���ժҪ�ֶε�ժҪֵ
+			 String retSql = StringUtil.substring(retInteg,0,keynameStart);
+             if (abstractValue.equals(retSql)) {
+			  logger.warn("�����");
+			 }	
+              else 
+               logger.warn("ժҪ�ֶ���ݶԱȲ����봦��");
+	 }
+#end
+
+#if(${table.getTableConfig().bIntegrity()} == true)	
+	/**
+     * ���²��������ֵ�������Ա�������
+     * @param name
+     * @param param
+     */
+	public void getIntegResultForUpdate(String ${table.getTableConfig().getIntegrity()}, Map param) {
+		String integValue = (String)param.get(${table.getTableConfig().getIntegrity()});
+		if (integValue != null || integValue.length()!=0) {
+		 //�Ը�ֵ���ժҪ==============
+		 //kmi��ȡ��Կ 
+	    KmiResult keyresult2 = getKmiResultInteg(abstractKeyName,appName,0);
+		//��kmi��ȡ�õ���Կ��Base64�����ģ��ʽ���
+		byte[] keyBytes = Base64.decode(keyresult2.getKeyData());
+		//��Ҫ���ܵ��ֶ�ת��Ϊbyte
+		byte[] confBytes = integValue.getBytes();
+		byte[] cipherBytes = null;
+		String abstractValue = null;
+		//����
+		try {
+			cipherBytes = CalculateMacUtil.calMac(confBytes, keyBytes, "HmacSHA256");
+			//��ժҪ�ֶν���Base64����
+		    abstractValue = Base64.encode(cipherBytes);
+		} catch (GeneralSecurityException e) {
+			logger.error("���ܳ����쳣");
+			throw new RuntimeException("�������ʱ������ժҪ��ɳ���",e);
+		}
+		
+        StringBuffer sb = new StringBuffer();
+		//�洢�ļ����ֶ�Ϊ����@version
+		String abstractFinalValue = sb.append(abstractValue).append("@").append(abstractKeyName).append("#").append(keyresult2.getVersion()).toString();
+		param.put("$!{integForUpdate}",abstractFinalValue);		
+	}
+	else
+	  logger.warn("Ҫ�����ֶ���ֵΪ�գ���У��");
+	} 
+#end
+
+#if(${table.getTableConfig().bConfidentiality()} == true)
+    /**
+     * ���²���ʱ�����Ա�������
+     * @param id
+     * @param param
+     */
+	public void getConfResultForUpdate(String ${table.getTableConfig().getConfidentiality()}, Map param) {
+
+		String confValue = (String)param.get(${table.getTableConfig().getConfidentiality()});
+		if (confValue != null || confValue.length()!=0) {
+		//�Ը�ֵ���м���==========
+		//kmi��ȡ��Կ 
+	    KmiResult keyresult = getKmiResultConf(encodeKeyName,appName,0);
+		//��kmi��ȡ�õ���Կ��Base64�����ģ��ʽ���
+		byte[] keyBytes = Base64.decode(keyresult.getKeyData());
+		//��Ҫ���ܵ��ֶ�ת��Ϊbyte
+		byte[] confBytes = confValue.getBytes();
+		byte[] cipherBytes = null;
+		String encodedValue = null;
+		//����
+		try {
+			cipherBytes = SymmtricCryptoUtil.symmtricCrypto(confBytes, keyBytes, "AES", Cipher.ENCRYPT_MODE);
+			//�Լ�����ݽ���Base64����
+		    encodedValue = Base64.encode(cipherBytes);
+		} catch (GeneralSecurityException e) {
+			logger.error("���ܳ����쳣");
+			throw new RuntimeException("�������ʱ�����Լ��ܳ���",e);
+		}
+		
+		StringBuffer sb = new StringBuffer();
+		//�洢�ļ����ֶ�Ϊ����@version
+		String finalValue = sb.append(encodedValue).append("@").append(encodeKeyName).append("#").append(keyresult.getVersion()).toString();
+		param.put("$!{confForUpdate}",finalValue);
+		}
+			else 
+		   logger.warn("Ҫ�����ֶ���ֵΪ�գ���У��");
+		}
+	
+#end
+
+#if(${table.getTableConfig().bIntegrity()} == true)	
+        /**
+        * ��ҳ������������У�鷽��
+        * @param tempValue
+        */
+	    public void checkIntegForPaging(List<${table.getQualifiedDOClassName()}> tempValue,${table.getQualifiedDOClassName()} opDO) {
+			
+		   for (int i = 0 ; i < tempValue.size(); i++) {
+			
+    		 opDO = tempValue.get(i);
+    		 //�����ݿ��е��������ֶ�,ȡkeyname��version
+    		 String integ = opDO.get$!{method2_getInteg}();
+			 //����������У���������ֵ
+			 String retInteg = opDO.get$!{finalI}();
+    		 if (integ != null && integ.length() != 0) {
+    		    int keynameStart = StringUtil.indexOfAny(integ,"@");
+			    int versionStart = StringUtil.indexOfAny(integ,"#");
+			    String keyname = StringUtil.substring(integ,keynameStart+1,versionStart);
+			    int versionFromDB = Integer.parseInt(StringUtil.substring(integ,versionStart+1,integ.length()));
+    		    //ȡ��Կ
+    		    KmiResult keyData = getKmiResultInteg(keyname,appName,versionFromDB);
+    		    //������Կ����Base64����
+    		    byte[] bytes = Base64.decode(keyData.getKeyData()); 
+    		    //���������Ա������ֶ�ת��Ϊ�ַ�
+                byte[] integBytes = retInteg.getBytes();
+                //�����Ա���
+    		    byte[] cipherBytes = null;
+    		    String abstractEncoded = null;
+                try {
+    		        cipherBytes = CalculateMacUtil.calMac(integBytes,bytes,"HmacSHA256");
+    			    abstractEncoded = Base64.encode(cipherBytes);
+    		    }
+                 catch (GeneralSecurityException e) {
+    			      logger.error("���ܳ����쳣");
+    				  throw new RuntimeException("��ҳ����ʱ��������Լ��ܳ���",e);
+    		    }
+			 //ȡ����ݿ��е�ժҪ����
+			 String abstractValue = StringUtil.substring(integ,0,keynameStart-1);
+             if (abstractEncoded.equals(abstractValue)) {
+			    logger.warn("�����");
+			 }	
+             else 
+                logger.warn("ժҪ�ֶ���ݶԱȲ����봦��");	
+		    }
+			else {
+			   logger.warn("��ݿ��и�ժҪ�ֶ�Ϊ�գ��޷�����У�飬��ȷ��");
+			   }
+		}
+		}
+#end	
+
+#if(${table.getTableConfig().bConfidentiality()} == true)
+      /**
+       * ��ҳ����ʱ��û����Խ��ܽ��
+       * @param pageList
+       * @param tempValue
+       * @return
+       */
+	 public PageList getConfResultForPaging(PageList pageList,
+			List<${table.getQualifiedDOClassName()}> tempValue,${table.getQualifiedDOClassName()} opDO) {
+		//���ڻ����Ժ������ԣ������㷨��ͬ�����Էֿ����ǣ������ǻ����Խ��ܲ���
+		for (int i = 0 ; i < tempValue.size(); i++) {
+		    opDO = tempValue.get(i);         
+		  //��ñ������Ļ������ֶ�
+		  String conf = opDO.get$!{method_getConf}();
+		  if (conf != null && conf.length() != 0) {
+		  //ȡ�ü����ֶ�ֵ
+		  int encodeStart = StringUtil.indexOfAny(conf,"@");
+		  int versionStart = StringUtil.indexOfAny(conf,"#");
+		  String tempEncodeValue = StringUtil.substring(conf,0,encodeStart);
+		   //��Ҫ���ܵ����Ľ���Base64����
+		  byte[] encodeValueBytes = Base64.decode(tempEncodeValue);
+		  String keyname = StringUtil.substring(conf,encodeStart+1,versionStart);
+		  int versionFromDB = Integer.parseInt(StringUtil.substring(conf,versionStart + 1,conf.length()));
+		  //��ȡ�����Ļ������ֶ�������=====
+		  //ȡ��Կ
+		  KmiResult keyData = getKmiResultConf(keyname,appName,versionFromDB);
+		  //�����ֶν���Base64����
+		  byte[] bytes = Base64.decode(keyData.getKeyData()); 
+		  //����
+		  byte[] resultBytes = null;
+		  String bytesToString = null;
+		  try {
+			resultBytes = SymmtricCryptoUtil.symmtricCrypto(encodeValueBytes, bytes, "AES", Cipher.DECRYPT_MODE);
+			//�����ܺ�����ת��ΪString����
+		    bytesToString = new String(resultBytes);
+		  } catch (GeneralSecurityException e) {
+			logger.error("���ܴ���");
+			 throw new RuntimeException("��ҳ����ʱ��ݻ����Լ��ܳ���",e);
+		  }
+		 
+		  opDO.set${finalRet}(bytesToString);
+		  
+		  //����pageList
+		  pageList.add(opDO);
+          }
+		  else {
+		     logger.warn("��ݿ��иû������ֶ�Ϊ��");
+			 pageList.add(opDO);
+		   }
+		   }
+		  return pageList;
+		  }
+#end
+#if(${table.getTableConfig().bConfidentiality()} == true)
+      public String getConfEncodedResult(String conf) {
+          //ȡ�ü����ֶ�ֵ
+		  int encodeStart = StringUtil.indexOfAny(conf,"@");
+		  int versionStart = StringUtil.indexOfAny(conf,"#");
+		  String tempEncodeValue = StringUtil.substring(conf,0,encodeStart);
+		  //��Ҫ���ܵ����Ľ���Base64����
+		  byte[] encodeValueBytes = Base64.decode(tempEncodeValue);
+		  String keyname = StringUtil.substring(conf,encodeStart+1,versionStart);
+		  int versionFromDB = Integer.parseInt(StringUtil.substring(conf,versionStart + 1,conf.length()));
+		  //��ȡ�����Ļ������ֶ�������=====
+		  //ȡ��Կ
+		  KmiResult keyData = getKmiResultConf(keyname,appName,versionFromDB);
+		  //�����ֶν���Base64����
+		  byte[] bytes = Base64.decode(keyData.getKeyData()); 
+		  //����
+		  byte[] resultBytes = null;
+		  String bytesToString = null;
+		  try {
+			resultBytes = SymmtricCryptoUtil.symmtricCrypto(encodeValueBytes, bytes, "AES", Cipher.DECRYPT_MODE);
+			//�����ܺ�����ת��ΪString����
+		    bytesToString = new String(resultBytes);
+		  } catch (GeneralSecurityException e) {
+			logger.error("���ܴ���");
+			throw new RuntimeException("��ݻ����Խ��ܳ���",e);
+		  }
+		  return bytesToString;
+	   }	  
+#end
+	 public void setKmiClient(KmiClient kmiClient) {
+		this.kmiClient = kmiClient;
+	}
+
+}

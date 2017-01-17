@@ -1,0 +1,42 @@
+## check parameters
+## for multiplicity = "object"
+#if(${operation.count} == "false") 
+#if (${operation.paramType} == "object")
+    	if (${operation.params.get(0).name} == null) {
+    		throw new IllegalArgumentException("Can't select by a null data object.");
+    	}
+
+#end
+## prepare parameters
+#if (${operation.params.size()} == 0)
+#set ($paramName = "null")
+#parse ("operation/single-select-in.vm")
+#parse ("operation/single-select-end.vm")
+#elseif (${operation.params.size()} == 1)
+#if (${operation.param.javaTypePrimitive})
+        ${operation.param.simpleJavaTypeForPrimitive} param = new ${operation.param.simpleJavaTypeForPrimitive}(${operation.param.name});
+#set ($paramName = "param")
+#parse ("operation/single-select-in.vm")
+#parse ("operation/single-select-end.vm")
+#else
+#set ($paramName = ${operation.param.name})
+#parse ("operation/single-select-in.vm")
+#parse ("operation/single-select-end.vm")
+#end
+#else
+        Map<String,Object> param = new HashMap<String,Object>();
+
+#foreach ($param in ${operation.params})
+#if ($param.javaTypeForPrimitive)
+        param.put("${param.name}", new ${param.simpleJavaTypeForPrimitive}(${param.name}));
+#else
+        param.put("${param.name}", ${param.name});
+#end
+#end
+#set ($paramName = "param")
+#parse ("operation/single-select-in.vm")
+#parse ("operation/single-select-end.vm")
+#end
+#else
+#parse ("operation/opbody-select-old.vm")
+#end
